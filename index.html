@@ -411,9 +411,7 @@ padding: 14px 0; text-shadow: 3px 3px 0 #400; animation: warn 2s forwards;
     <div class="row wide"><span class="label">しょう</span><span class="value" id="progressDisplay">&nbsp;</span></div>
   </div>
 
-  <div id="planeWrap"><canvas id="plane" width="300" height="186"></canvas>
-    <div id="tapHint" class="hidden"><div class="ring"></div><span class="finger">👆</span><span class="txt">ここを タップ</span></div>
-  </div>
+  <div class="rpg-window" id="message"><span id="msgText">&nbsp;</span></div>
 
   <div class="rpg-window" id="battle">
     <button id="skipTut" class="hidden">とばす ▶▶</button>
@@ -424,7 +422,9 @@ padding: 14px 0; text-shadow: 3px 3px 0 #400; animation: warn 2s forwards;
     </div>
   </div>
 
-  <div class="rpg-window" id="message"><span id="msgText">&nbsp;</span></div>
+  <div id="planeWrap"><canvas id="plane" width="300" height="186"></canvas>
+    <div id="tapHint" class="hidden"><div class="ring"></div><span class="finger">👆</span><span class="txt">ここを タップ</span></div>
+  </div>
 
   <div id="controls">
     <button class="key opt hidden" data-i="0"></button>
@@ -1714,9 +1714,13 @@ function appear() {
   if (p() && p().mab && !state.tut) { mabWarn(); return 'まぼろしの ' + enemyNow().name + 'が あらわれた！'; }
   return enemyNow().name + 'が　あらわれた！';
 }
+function warnTop(el) {   // 帯は メッセージの ところに 出す（図に 重ねない）
+  const g = gameEl.getBoundingClientRect(), m = $('message').getBoundingClientRect();
+  el.style.top = Math.max(0, m.top - g.top) + 'px';
+}
 function mabWarn() {
   const el = document.createElement('div'); el.className = 'boss-warn mab'; el.textContent = '✨ まぼろし ✨';
-  gameEl.appendChild(el); setTimeout(() => el.remove(), 2000); flashScreen(); setTimeout(flashScreen, 200);
+  warnTop(el); gameEl.appendChild(el); setTimeout(() => el.remove(), 2000); flashScreen(); setTimeout(flashScreen, 200);
 }
 function enemyNow() { const c = chap(); return atBoss() ? c.boss : C.monsterOf(p() ? p().form : c.forms[0]); }
 function renderEnemy() {
@@ -1731,7 +1735,7 @@ function bossWarn(final) {
   const el = document.createElement('div');
   el.className = 'boss-warn' + (final ? ' final' : '');
   el.textContent = final ? '⚠ BOSS ⚠' : '⚠ 中ボス ⚠';
-  gameEl.appendChild(el); setTimeout(() => el.remove(), 2000);
+  warnTop(el); gameEl.appendChild(el); setTimeout(() => el.remove(), 2000);
 }
 const PUNC = t => t.replace(/。/g, '．').replace(/、/g, '，');   // 問題文は 教科書と おなじ「，」「．」
 // 問題集の ことばは「条件」と「どうするか」の あいだで 改行：いちばん 後ろの「の とき、」など の あと、なければ 最後の 文の まえ
