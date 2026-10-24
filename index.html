@@ -720,7 +720,7 @@ function k3Options(q, add, rng, boss) {
     const S = gtSides(q), V0 = ABC.reduce((b, v) => (S[lo(v)] < S[lo(b)] ? v : b), 'A'), ng = q.ans === 2, t = (W, n) => W + '（cos' + W + ' ' + (n ? '＜' : '＞') + ' 0）';
     add(t(X, ng), 1, []); add(t(X, !ng), 2, ['type']); add(t(V0, ng), 3, ['long']); add(t(V0, !ng), 4, ['long', 'type']);
   }
-  if (m === 'boxDiag') { const [p, w, h] = BOXES[q.box]; add('√(' + sq(p) + ' ＋ ' + sq(w) + ' ＋ ' + sq(h) + ')', 1, []); add('√(' + sq(p) + ' ＋ ' + sq(w) + ')', 2, ['face']); add(p + ' ＋ ' + w + ' ＋ ' + h, 3, ['sum']); add('√(' + sq(p) + ' ＋ ' + sq(h) + ')', 4, ['face']); }
+  if (m === 'boxDiag') { const [p, w, h] = BOXES[q.box]; add('√{' + sq(p) + ' ＋ ' + sq(w) + ' ＋ ' + sq(h) + '}', 1, []); add('√{' + sq(p) + ' ＋ ' + sq(w) + '}', 2, ['face']); add(p + ' ＋ ' + w + ' ＋ ' + h, 3, ['sum']); add('√{' + sq(p) + ' ＋ ' + sq(h) + '}', 4, ['face']); }
   if (m === 'boxTri') { const right = q.kind === 'side' ? 0 : 2; BOXTHM.forEach((t, i) => add(t, i, i === right ? [] : ['thm'])); return true; }
   if (m === 'boxRight') { const r = boxRightAt(q, q.tri); q.tri.split('').forEach(v => add('∠' + v, v, v === r ? [] : ['right'])); add('直角は ない', 'none', r ? ['right'] : []); return true; }
   if (m === 'boxTan') { const [p, w, h] = BOXES[q.box], eg = Math.round(Math.hypot(p, w)), ag = Math.round(Math.hypot(p, w, h)); const F = (n, d) => '{' + n + '|' + d + '}'; add(F(h, eg), 1, []); add(F(eg, h), 2, ['flip']); add(F(h, ag), 3, ['ratioT']); add(F(eg, ag), 4, ['ratioT']); }
@@ -774,7 +774,7 @@ function k3Reasons(q, L) {
   if (m === 'areaF' || m === 'areaAng' || m === 'inradBC') { const [Y2, Z2] = rest2(X); add('S ＝ {1|2}' + lo(Y2) + lo(Z2) + ' sin' + X + '（' + X + ' は ' + lo(Y2) + ' と ' + lo(Z2) + ' の 間の 角）'); }
   if (m === 'inrad' || m === 'inradBC') add('内接円の 中心と 3つの 頂点で 3つの 三角形に わける → S ＝ {1|2}r(a ＋ b ＋ c)');
   if (m === 'sineThird') add(lo(q.Z) + ' の 向かいの 角 ' + q.Z + ' ＝ 180° − ' + X + ' − ' + Y + ' を 先に → 正弦定理');
-  if (m === 'boxDiag') add('AG² ＝ AE² ＋ EG²、EG² ＝ EF² ＋ FG² → AG ＝ √(AB² ＋ AD² ＋ AE²)');
+  if (m === 'boxDiag') add('AG² ＝ AE² ＋ EG²、EG² ＝ EF² ＋ FG² → AG ＝ √{AB² ＋ AD² ＋ AE²}');
   if (m === 'boxTri') add(q.kind === 'side' ? '△' + q.tri + ' は 直角三角形（直角は ' + boxRightAt(q, q.tri) + '）→ 三平方の 定理' : '△' + q.tri + ' の 3辺は どれも 面の 対角線（直角は ない）→ 3辺 から 角は 余弦定理');
   if (m === 'boxRight') { const r = boxRightAt(q, q.tri); add(r ? '辺が 面に 垂直 → その 面の 中の 線とも 垂直 → ∠' + r + ' ＝ 90°' : '3辺とも 面の 対角線 → 直角は ない'); }
   if (m === 'boxTan') { const [p, w, h] = BOXES[q.box]; add('AE は 底面に 垂直 → △AEG は ∠E が 直角'); add('tanθ ＝ {AE|EG} ＝ {' + h + '|' + Math.round(Math.hypot(p, w)) + '}'); }
@@ -860,7 +860,7 @@ const MONSTERS = [
   ['areaAng', 'アイダノカク', '🥪', 'S ＝ {1|2}bc sinA の A は b と c に はさまれた 角'],
   ['areaF', 'メンセキ', '🟩', 'S ＝ {1|2}bc sinA（{1|2} と sin を わすれない）'],
   ['inrad', 'ナイセツエン', '🍩', 'S ＝ {1|2}r(a ＋ b ＋ c)（3つの 三角形に わける）'],
-  ['boxDiag', 'タイカクセン', '📦', '対角線 ＝ √(たて² ＋ よこ² ＋ 高さ²)'],
+  ['boxDiag', 'タイカクセン', '📦', '対角線 ＝ √{たて² ＋ よこ² ＋ 高さ²}'],
   ['boxRight', 'カドミツケ', '🧊', '面に 垂直な 辺は、その 面の 中の どの 線とも 垂直'],
   ['boxTri', 'キリダシ', '✂️', '取り出した 三角形に 直角が あれば 三平方の 定理、なければ 余弦定理'],
 ].map(([id, name, sprite, tip]) => ({ id, ch: FORM_LV[id], name, sprite, tip }))
@@ -1656,7 +1656,7 @@ const atBoss = () => state.slotIdx >= nNormal();
 const bossId = () => (chap().final ? 'final' : 'boss' + chap().ch);
 // 式の 文字を TeX 風の HTML に する。stacked の ときは a/b を 上下に 積む。√ の 中身には 上に 線
 function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function rootHTML(t) { return t.replace(/√(\d+)/g, '<span class="rt">√<span class="rad">$1</span></span>'); }
+function rootHTML(t) { return t.replace(/√\{([^{}]*)\}/g, '<span class="rt">√<span class="rad">$1</span></span>').replace(/√(\d+)/g, '<span class="rt">√<span class="rad">$1</span></span>'); }
 const FR = (a, b) => '<span class="fr"><span class="nu">' + a + '</span><span class="de">' + b + '</span></span>';
 function mathHTML(text, stacked) {
   let h = esc(text);
@@ -2096,12 +2096,12 @@ const K3_KIND_OF = m => (m.mode === 'thmPick' && C.K3_KIND[m.kind] ? C.K3_KIND[m
 // ---------- Ⅲ：直方体 ABCD−EFGH（AE が たて、ABCD が 上の 面。見えない 辺は 点線）----------
 function drawBox(ctx, g, q) {
   const m = q.prm, d = g.d, rev = state.reveal, B3 = C.boxPts(m), [p, w, h] = C.BOXES[m.box];
-  const kz = Math.min(1, 1.1 * (p + w) / h), pr = ([x, y, z]) => [x + 0.62 * y, kz * z + 0.42 * y];   // 細長い 直方体は 高さを ちぢめて 描く（長さは 数で）
+  const kz = Math.min(1, 1.1 * (p + w) / h), kx = Math.max(1, 0.45 * Math.max(w, kz * h) / p), pr = ([x, y, z]) => [kx * x + 0.8 * y, kz * z + 0.5 * y];   // 細い・細長い 直方体は 形を ととのえて 描く（長さは 数で）   // 細長い 直方体は 高さを ちぢめて 描く（長さは 数で）
   const pts = Object.values(B3).map(pr), xs = pts.map(v => v[0]), ys = pts.map(v => v[1]);
   const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-  const sc = Math.min(0.6 * g.W / (x1 - x0), 0.6 * g.H / (y1 - y0)), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
-  const S = {}; Object.keys(B3).forEach(k => { const [X0, Y0] = pr(B3[k]); S[k] = [g.W / 2 + (X0 - mx) * sc, g.H * 0.56 - (Y0 - my) * sc]; });
-  const cen = [g.W / 2, g.H * 0.56];
+  const sc = Math.min(0.6 * g.W / (x1 - x0), 0.56 * g.H / (y1 - y0)), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  const S = {}; Object.keys(B3).forEach(k => { const [X0, Y0] = pr(B3[k]); S[k] = [g.W / 2 + (X0 - mx) * sc, g.H * 0.5 - (Y0 - my) * sc]; });
+  const cen = [g.W / 2, g.H * 0.5];
   const line = (u, v, col, wd, dash) => seg(ctx, g, S[u][0], S[u][1], S[v][0], S[v][1], col, wd, dash);
   const EDGES = ['AB', 'BC', 'CD', 'DA', 'EF', 'FG', 'GH', 'HE', 'AE', 'BF', 'CG', 'DH'];
   // 取り出す 三角形（色を ぬる）
@@ -2112,10 +2112,13 @@ function drawBox(ctx, g, q) {
   EDGES.forEach(e => line(e[0], e[1], e.includes('H') ? GRAY : '#fff', e.includes('H') ? 1.4 : 2, e.includes('H')));
   if (tri) [[0, 1], [1, 2], [0, 2]].forEach(([i, j]) => line(tri[i], tri[j], ORANGE2, 3));
   // 長さ
-  if (m.mode !== 'boxRight') [['EF', p], ['BC', w], ['AE', h]].forEach(([e, v]) => {
-    const mxy = [(S[e[0]][0] + S[e[1]][0]) / 2, (S[e[0]][1] + S[e[1]][1]) / 2], dx = mxy[0] - cen[0], dy = mxy[1] - cen[1], n = Math.hypot(dx, dy) || 1;
-    seg(ctx, g, S[e[0]][0], S[e[0]][1], S[e[1]][0], S[e[1]][1], BLUE2, 4);
-    textAt(ctx, g, String(v), mxy[0] + dx / n * 14 * d, mxy[1] + dy / n * 14 * d, '#8fb4ff', 'center', 14);
+  if (m.mode !== 'boxRight') [['EF', p], ['FG', w], ['AE', h]].forEach(([e, v]) => {   // 長さの 数は 辺の 外がわ（辺に 垂直な 向き）
+    const [U, W] = [S[e[0]], S[e[1]]], mxy = [(U[0] + W[0]) / 2, (U[1] + W[1]) / 2], ex = W[0] - U[0], ey = W[1] - U[1], n = Math.hypot(ex, ey) || 1;
+    let nx = -ey / n, ny = ex / n;
+    if (nx * (mxy[0] - cen[0]) + ny * (mxy[1] - cen[1]) < 0) { nx = -nx; ny = -ny; }
+    seg(ctx, g, U[0], U[1], W[0], W[1], BLUE2, 4);
+    const off = (15 + Math.max(0, 44 - n / d) * 0.45) * d;   // 短い 辺では 頂点の 文字から はなす
+    textAt(ctx, g, String(v), Math.max(9 * d, Math.min(g.W - 9 * d, mxy[0] + nx * off)), Math.max(9 * d, Math.min(g.H - 9 * d, mxy[1] + ny * off)), '#8fb4ff', 'center', 14);
   });
   if (m.mode === 'boxDiag') {
     if (rev) line('E', 'G', CYAN, 2, true);
