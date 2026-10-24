@@ -411,6 +411,10 @@ padding: 14px 0; text-shadow: 3px 3px 0 #400; animation: warn 2s forwards;
     <div class="row wide"><span class="label">しょう</span><span class="value" id="progressDisplay">&nbsp;</span></div>
   </div>
 
+  <div id="planeWrap"><canvas id="plane" width="300" height="186"></canvas>
+    <div id="tapHint" class="hidden"><div class="ring"></div><span class="finger">👆</span><span class="txt">ここを タップ</span></div>
+  </div>
+
   <div class="rpg-window" id="battle">
     <button id="skipTut" class="hidden">とばす ▶▶</button>
     <div id="enemy"><div id="monster">🌀</div><div id="monsterName">ヒダリマワリ</div><button id="ruleBtn">？ やくそく</button></div>
@@ -418,10 +422,6 @@ padding: 14px 0; text-shadow: 3px 3px 0 #400; animation: warn 2s forwards;
       <div class="label" id="problemLabel">&nbsp;</div>
       <div class="expr" id="problemExpr">&nbsp;</div>
     </div>
-  </div>
-
-  <div id="planeWrap"><canvas id="plane" width="300" height="186"></canvas>
-    <div id="tapHint" class="hidden"><div class="ring"></div><span class="finger">👆</span><span class="txt">ここを タップ</span></div>
   </div>
 
   <div class="rpg-window" id="message"><span id="msgText">&nbsp;</span></div>
