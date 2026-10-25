@@ -1827,11 +1827,11 @@ function renderControls() {
 // 選択肢の 文字が ボタンに 入りきらない ときは、文字を 小さく（13px まで）→ それでも 入らなければ 1列に して もう一度
 
 // 問題文の 式は 演算子の 前後で 改行しない（文字が 大きい 設定でも 式が 途中で 折れないように）
-function keepMath(root) {
+function keepMath(root, noFit) {
   // 問題文は「演算子の となりで ない 空白」と 改行の ところ だけで 折る。式の かたまり（y ＝ (2 ＋ √3)x、tan(β − α) ＝ ？ など）は
   // √ や 分数を ふくめて 1つの 改行しない 箱（.nwm）に 入れる。1行に 入らない 長い 式だけ、＝・不等号の 前で 分けて よい
   if (!root) return;
-  if (root.querySelector('.nwm')) { fitRuns(root); return; }
+  if (root.querySelector('.nwm')) { if (!noFit) fitRuns(root); return; }
   const OPS = '＝＋−×＜＞≦≧±', out = [];
   let run = null, prev = '';
   const newRun = () => { const s = document.createElement('span'); s.className = 'nwm'; s.style.whiteSpace = 'nowrap'; return s; };
@@ -1852,16 +1852,16 @@ function keepMath(root) {
         buf += ch;
       }
       if (buf) { add(document.createTextNode(buf)); prev = buf[buf.length - 1]; }
-    } else if (k.nodeName === 'BR') { flush(); out.push(k); prev = ''; }
+    } else if (k.nodeName === 'BR' || k.nodeName === 'TABLE' || k.nodeName === 'DIV') { flush(); out.push(k); prev = ''; }   // 表などは そのまま
     else { add(k); prev = 'x'; }
   });
   flush();
   root.replaceChildren(...out);
-  fitRuns(root);
+  if (!noFit) fitRuns(root);
 }
 function fitRuns(root) {   // 図の 幅が 決まって から 測る（まだ 見えない ときは 何も しない）
   const newRun = () => { const s = document.createElement('span'); s.className = 'nwm'; s.style.whiteSpace = 'nowrap'; return s; };
-  const W = root.clientWidth;
+  const cs = getComputedStyle(root), W = root.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);   // 中身の 幅
   if (W < 40) return;
   root.querySelectorAll('.nwm[data-wrap]').forEach(sp => { sp.style.whiteSpace = 'nowrap'; sp.removeAttribute('data-wrap'); });   // 前に 折った ものは 測り直す
   let split = false;
@@ -1893,10 +1893,12 @@ function fitOpts() {
   const c = $('controls'), vis = optBtns.filter(b => !b.classList.contains('hidden'));
   c.classList.remove('one'); optBtns.forEach(b => { b.style.fontSize = ''; });
   if (!vis.length) return;
+  vis.forEach(b => keepMath(b, true));   // 選択肢の 式も 改行しない 箱に（入らなければ 下で 文字を 小さく → 1列）
   const over = () => vis.some(b => b.scrollWidth > b.clientWidth + 1);
   const shrink = min => { let f = parseFloat(getComputedStyle(vis[0]).fontSize); while (over() && f > min) { f -= 1; vis.forEach(b => { b.style.fontSize = f + 'px'; }); } };
   shrink(13);
   if (over()) { vis.forEach(b => { b.style.fontSize = ''; }); c.classList.add('one'); shrink(8); }
+  if (over()) vis.forEach(b => fitRuns(b));   // それでも 入らない 長い 式だけ 分ける
 }
 window.__fitOpts = fitOpts;
 function ready() {
